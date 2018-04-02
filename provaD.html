@@ -13,12 +13,18 @@
 
 		D.creaTela(600,600);
 
-		D.spessore(1);
-		D.tratto("black");
-		D.linea(100,100,200,200);
-		D.spessore(5);
+		D.tratto("green");
+		D.spessore(3);
+		var l=new D.linea(50,100,150,200);
+		l.trasla(0,100,3000);
+		
 		D.tratto("red");
-		D.punto(100,200);
+		D.spessore(5);
+		var A=new D.punto(50,200);
+		A.trasla(100,100,3000);
+
+		D.anima();
+		
 	</script>
 </body>
 </html>
