@@ -10,21 +10,36 @@
 <body>
 	<div id="quadro"></div>
 	<script>
+		//con D.<funzione> si chiama in gioco la libreria
+		D.creaTela(600,600); //necessario a far funzionare il tutto
 
-		D.creaTela(600,600);
-
-		D.tratto("green");
-		D.spessore(3);
-		var l=new D.linea(50,100,150,200);
-		l.trasla(0,100,3000);
+		D.tratto("rgb(200,0,0)"); //imposta il colore del tratto
+		D.spessore(3);	//imposta lo spessore del tratto e la dimensione dei punti (raggio=spessore)
+		D.sfondo("black"); //imposta il colore della canvas (FUNZIONA SOLO CON LE PAROLE, forse)
+			
 		
-		D.tratto("red");
-		D.spessore(5);
-		var A=new D.punto(50,200);
-		A.trasla(100,100,3000);
+		var A=new D.punto(100,100); //crea un nuovo punto con le opzioni correnti
+		A.trasla(100,100,1500); //trasla del vettore indicato nel tempo dato subito dopo
+		A.trasla(100,-100,1500);
+		A.dimensiona(20,1500); //aggiunge alla dimensione (anche per segmenti, rispetto al centro)
+		A.dimensiona(-20,1500);
+		A.sfuma([-100,50,200],3000); //cambia colore, addizionando i canali RGB (anche su segmenti)
 
-		D.anima();
+		D.spessore(2);
+		D.tratto("rgb(255,255,255)");
+		var r=new D.linea(100,200,200,200); //crea un segmento di estremi indicati
+		r.ruota(Math.PI,3000);
 		
+		var s=new D.linea(100,300,200,300,-1); //un parametro aggiuntivo sposta sugli estremi (-1,1) il centro di rotazione
+		s.ruota(Math.PI,3000);
+
+		D.tratto("blue");
+		var t=new D.linea(400,250,400,350,-1);
+		t.ruota(Math.PI,3000);
+		t.spostaCentro(2,3000); //sposta il centro di rotazione lungo il sgmento
+
+
+		D.anima(); //necessario ad animare, da mettere alla fine
 	</script>
 </body>
 </html>
