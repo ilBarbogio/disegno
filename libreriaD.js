@@ -108,7 +108,6 @@
 		}
 		_libreriaD.riempimento=function(colore){
 			opzioniDisegno.coloreRiempimento=this.parseColore(colore);
-			console.log(colore+"  "+opzioniDisegno.coloreTratto)
 			this.impostaOpzioniDisegno();
 		}
 		_libreriaD.capi=function(capi){
@@ -142,7 +141,7 @@
 		}
 		//ciclo di animazione vero e proprio
 		var ciclo=function(contesto){
-			contesto.cancella();
+			//contesto.cancella();
 			codaDisegno.forEach(function(item){
 				disegna(item);
 			});
@@ -157,6 +156,9 @@
 				case "linea":
 				disegnaLinea(oggetto);
 				break;
+				case "cerchio":
+				disegnaCerchio(oggetto);
+				break;
 			}
 		}
 
@@ -164,7 +166,7 @@
 		_libreriaD.intercalare=function(iniziale,aggiunta,tempo,stile){
 			var temp=[];
 			var passi=tempo/deltaTime;
-			if(stile=="lineare"){
+			if(stile=="lineare"){ //INTERPOLAZIONE LINEARE - velocità costante
 				switch(typeof(iniziale)){
 					case "number": //se il valore è un singolo numero
 					var delta=aggiunta/passi;
@@ -197,10 +199,47 @@
 					break;
 				}
 			}
+			else if(stile=="introduci"){ //INTERPOLAZIONE LISCIATA <---- DA FARE!!!
+				switch(typeof(iniziale)){
+					case "number": //se il valore è un singolo numero
+					var delta=aggiunta/passi;
+					var tappa=Math.floor(passi/5);
+					var scarto=0;
+					for(var i=1;i<passi;i++){
+						if(i<tappa){temp.push(iniziale+i*delta-delta*1/(i+1));scarto+=delta*1/(i+1);console.log(delta*1/(i+1))}
+						else if(i==tappa){temp.push(iniziale+i*delta-delta*1/(i+1));delta+=scarto/(passi-tappa);console.log(scarto)}
+						else temp.push(iniziale+i*delta);
+					}
+					temp.push(iniziale+aggiunta);
+					return temp;
+					break;
+					case "object": //se abbiamo un oggetto, pensando a un array
+					if(Array.isArray(iniziale)){
+						var delta=[];
+						for(var j=0;j<iniziale.length;j++){//definisco un vettore di incrementi
+							delta.push(aggiunta[j]/passi);
+						}
+						for(var i=1;i<passi;i++){
+							var tempPasso=[];
+							for(var j=0;j<delta.length;j++){
+								tempPasso.push(iniziale[j]+i*delta[j]);
+							}
+							temp.push(tempPasso);
+						}
+						var ultimoPasso=[];
+						for(var j=0;j<iniziale.length;j++){//definisco un vettore di incrementi
+							ultimoPasso.push(iniziale[j]+aggiunta[j]);
+						}
+						temp.push(ultimoPasso);
+					}
+					return temp;
+					break;
+				}
+			}
 			return false;
 		}
 
-		//figure base
+		//FIGURE BASE
 		_libreriaD.punto=function(Xa,Ya){
 			var identita=uniqueId;
 			uniqueId++;
@@ -258,6 +297,7 @@
 				stileInterpolazioni:opzioniDisegno.stileInterpolazioni,
 				colore:[opzioniDisegno.coloreTratto],
 				spessore:[opzioniDisegno.spessoreTratto],
+				capi:opzioniDisegno.capiLinea,
 				posizione:[posizioneIniziale],
 				offset:[offset],
 				angolo:[angoloIniziale],
@@ -302,10 +342,83 @@
 			var spessore=oggetto.spessore[Math.min(timeStamp,oggetto.spessore.length-1)];
 			ctx.strokeStyle=RGBDaArray(colore);
 			ctx.lineWidth=spessore;
+			ctx.lineCap=oggetto.capi;
 			ctx.beginPath();
 			ctx.moveTo(posizione[0]-lunghezza*Math.cos(angolo)*(1+offset)/2,posizione[1]-lunghezza*Math.sin(angolo)*(1+offset)/2);
 			ctx.lineTo(posizione[0]+lunghezza*Math.cos(angolo)*(1-offset)/2,posizione[1]+lunghezza*Math.sin(angolo)*(1-offset)/2)
 			ctx.stroke();
+		}
+
+		_libreriaD.cerchio=function(Xc,Yc,raggio,stile){
+			var identita=uniqueId;
+			uniqueId++;
+			//precalcoli
+			var bordoIniziale;
+			var riempimentoIniziale;
+			if(stile==null||stile=="vuoto"){bordoIniziale=true;riempimentoIniziale=false;}
+			else if(stile=="pieno"){bordoIniziale=false;riempimentoIniziale=true;}
+			else if(stile=="tutto"){bordoIniziale=true;riempimentoIniziale=true;}
+			var oggetto={
+				id:identita,
+				tipo:"cerchio",
+				stileInterpolazioni:opzioniDisegno.stileInterpolazioni,
+				coloreBordo:[opzioniDisegno.coloreTratto],
+				spessore:[opzioniDisegno.spessoreTratto],
+				bordo:bordoIniziale,
+				coloreRiempimento:[opzioniDisegno.coloreRiempimento],
+				riempimento:riempimentoIniziale,
+				angolo:[0],
+				posizione:[[Xc,Yc]],
+				raggio:[raggio]
+			}
+			codaDisegno.push(oggetto);
+
+			this.trasla=function(X,Y,tempo){
+				var indice=oggetto.posizione.length;
+				var valore=oggetto.posizione[indice-1];
+				var aggiunta=[X,Y];
+				oggetto.posizione=oggetto.posizione.concat(_libreriaD.intercalare(valore,aggiunta,tempo,oggetto.stileInterpolazioni));
+			}
+			this.sfuma=function(aggiunta,tempo,elemento){
+				if(elemento==null||elemento=="tutto"){
+					sfumaBordo(aggiunta,tempo);
+					sfumaRiempimento(aggiunta,tempo);
+				}else if(elemento=="bordo"){
+					sfumaBordo(aggiunta,tempo);
+				}else if(elemento=="riempimento"){
+					sfumaRiempimento(aggiunta,tempo);
+				}
+			}
+			var sfumaBordo=function(aggiunta,tempo){
+				var indice=oggetto.coloreBordo.length;
+				var valore=oggetto.coloreBordo[indice-1];
+				oggetto.coloreBordo=oggetto.coloreBordo.concat(_libreriaD.intercalare(valore,aggiunta,tempo,oggetto.stileInterpolazioni));
+			}
+			var sfumaRiempimento=function(aggiunta,tempo){
+				var indice=oggetto.coloreRiempimento.length;
+				var valore=oggetto.coloreRiempimento[indice-1];
+				oggetto.coloreRiempimento=oggetto.coloreRiempimento.concat(_libreriaD.intercalare(valore,aggiunta,tempo,oggetto.stileInterpolazioni));
+			}
+			this.dimensiona=function(misura,tempo){
+				var indice=oggetto.raggio.length;
+				var valore=oggetto.raggio[indice-1];
+				oggetto.raggio=oggetto.raggio.concat(_libreriaD.intercalare(valore,misura,tempo,oggetto.stileInterpolazioni));
+			}
+		}
+
+		var disegnaCerchio=function(oggetto){
+			var posizione=oggetto.posizione[Math.min(timeStamp,oggetto.posizione.length-1)];
+			var coloreBordo=oggetto.coloreBordo[Math.min(timeStamp,oggetto.coloreBordo.length-1)];
+			var coloreRiempimento=oggetto.coloreRiempimento[Math.min(timeStamp,oggetto.coloreRiempimento.length-1)];
+			var spessore=oggetto.spessore[Math.min(timeStamp,oggetto.spessore.length-1)];
+			var raggio=oggetto.raggio[Math.min(timeStamp,oggetto.raggio.length-1)];
+			ctx.strokeStyle=RGBDaArray(coloreBordo);
+			ctx.fillStyle=RGBDaArray(coloreRiempimento);
+			ctx.lineWidth=spessore;
+			ctx.beginPath();
+			ctx.arc(posizione[0],posizione[1],raggio,0,2*Math.PI);
+			if(oggetto.riempimento){ctx.fill();}
+			if(oggetto.bordo){ctx.stroke();}
 		}
 
 		//convertitore colori

@@ -13,6 +13,7 @@
 		//con D.<funzione> si chiama in gioco la libreria
 		D.creaTela(600,600); //necessario a far funzionare il tutto
 
+/*
 		D.tratto("rgb(200,0,0)"); //imposta il colore del tratto
 		D.spessore(3);	//imposta lo spessore del tratto e la dimensione dei punti (raggio=spessore)
 		D.sfondo("black"); //imposta il colore della canvas (FUNZIONA SOLO CON LE PAROLE, forse)
@@ -36,8 +37,27 @@
 		D.tratto("blue");
 		var t=new D.linea(400,250,400,350,-1);
 		t.ruota(Math.PI,3000);
-		t.spostaCentro(2,3000); //sposta il centro di rotazione lungo il sgmento
+		t.spostaCentro(2,3000); //sposta il centro di rotazione lungo il segmento
+		
+		var c=new D.cerchio(100,100,50,"vuoto"); //crea un cerchio disgnando solo "bordo" (default, omettendo), "riempimento" o "tutto"
+		c.sfuma([100,-100,-100],600,"tutto"); //sfumare può riguardare solo "bordo" o "riempimnto", tutto è default (omettendo)
+		*/
 
+		
+		var stella=function(x,y,raggio,rientro,foglie,tempo){
+			D.spessore(2);
+			var P=new D.linea(x,y,x,y+raggio,-1);
+			P.ruota(Math.PI*2,tempo);
+			P.sfuma([50,100,200],tempo/2);
+			P.sfuma([-50,-100,-200],tempo/2);
+			for(var i=0;i<=foglie;i++){
+				P.dimensiona(-rientro,tempo/(2*foglie+1));
+				P.dimensiona(rientro,tempo/(2*foglie+1));
+			}
+		}
+
+		stella(300,300,50,20,6,6000);
+		
 
 		D.anima(); //necessario ad animare, da mettere alla fine
 	</script>
