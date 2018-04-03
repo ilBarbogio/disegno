@@ -13,7 +13,12 @@
 		//con D.<funzione> si chiama in gioco la libreria
 		D.creaTela(600,600); //necessario a far funzionare il tutto
 
-/*
+		D.tratto("red");
+		var A=new D.punto(300,300);
+		A.trasla(100,100,1000).dimensiona(30,1000).sfuma([-200,0,-200],1000);
+
+
+		/*
 		D.tratto("rgb(200,0,0)"); //imposta il colore del tratto
 		D.spessore(3);	//imposta lo spessore del tratto e la dimensione dei punti (raggio=spessore)
 		D.sfondo("black"); //imposta il colore della canvas (FUNZIONA SOLO CON LE PAROLE, forse)
@@ -56,7 +61,7 @@
 			}
 		}
 
-		stella(300,300,50,20,6,6000);
+		//stella(300,300,50,20,6,6000);
 		
 
 		D.anima(); //necessario ad animare, da mettere alla fine

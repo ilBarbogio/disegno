@@ -259,17 +259,20 @@
 				var valore=oggetto.posizione[indice-1];
 				var aggiunta=[X,Y];
 				oggetto.posizione=oggetto.posizione.concat(_libreriaD.intercalare(valore,aggiunta,tempo,oggetto.stileInterpolazioni));
+				return this;
 			}
 
 			this.sfuma=function(aggiunta,tempo){
 				var indice=oggetto.colore.length;
 				var valore=oggetto.colore[indice-1];
 				oggetto.colore=oggetto.colore.concat(_libreriaD.intercalare(valore,aggiunta,tempo,oggetto.stileInterpolazioni));
+				return this;
 			}
 			this.dimensiona=function(misura,tempo){
 				var indice=oggetto.spessore.length;
 				var valore=oggetto.spessore[indice-1];
 				oggetto.spessore=oggetto.spessore.concat(_libreriaD.intercalare(valore,misura,tempo,oggetto.stileInterpolazioni));
+				return this;
 			}
 		}
 
@@ -310,26 +313,31 @@
 				var valore=oggetto.posizione[indice-1];
 				var aggiunta=[X,Y];
 				oggetto.posizione=oggetto.posizione.concat(_libreriaD.intercalare(valore,aggiunta,tempo,oggetto.stileInterpolazioni));
+				return this;
 			}
 			this.ruota=function(misura,tempo){
 				var indice=oggetto.angolo.length;
 				var valore=oggetto.angolo[indice-1];
 				oggetto.angolo=oggetto.angolo.concat(_libreriaD.intercalare(valore,misura,tempo,oggetto.stileInterpolazioni));
+				return this;
 			}
 			this.spostaCentro=function(misura,tempo){
 				var indice=oggetto.offset.length;
 				var valore=oggetto.offset[indice-1];
 				oggetto.offset=oggetto.offset.concat(_libreriaD.intercalare(valore,misura,tempo,oggetto.stileInterpolazioni));
+				return this;
 			}
 			this.sfuma=function(aggiunta,tempo){
 				var indice=oggetto.colore.length;
 				var valore=oggetto.colore[indice-1];
 				oggetto.colore=oggetto.colore.concat(_libreriaD.intercalare(valore,aggiunta,tempo,oggetto.stileInterpolazioni));
+				return this;
 			}
 			this.dimensiona=function(misura,tempo){
 				var indice=oggetto.lunghezza.length;
 				var valore=oggetto.lunghezza[indice-1];
 				oggetto.lunghezza=oggetto.lunghezza.concat(_libreriaD.intercalare(valore,misura,tempo,oggetto.stileInterpolazioni));
+				return this;
 			}
 		}
 
@@ -378,6 +386,7 @@
 				var valore=oggetto.posizione[indice-1];
 				var aggiunta=[X,Y];
 				oggetto.posizione=oggetto.posizione.concat(_libreriaD.intercalare(valore,aggiunta,tempo,oggetto.stileInterpolazioni));
+				return this;
 			}
 			this.sfuma=function(aggiunta,tempo,elemento){
 				if(elemento==null||elemento=="tutto"){
@@ -388,6 +397,7 @@
 				}else if(elemento=="riempimento"){
 					sfumaRiempimento(aggiunta,tempo);
 				}
+				return this;
 			}
 			var sfumaBordo=function(aggiunta,tempo){
 				var indice=oggetto.coloreBordo.length;
@@ -403,6 +413,7 @@
 				var indice=oggetto.raggio.length;
 				var valore=oggetto.raggio[indice-1];
 				oggetto.raggio=oggetto.raggio.concat(_libreriaD.intercalare(valore,misura,tempo,oggetto.stileInterpolazioni));
+				return this;
 			}
 		}
 
